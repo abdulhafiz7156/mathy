@@ -1,30 +1,59 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+
+import {onMounted, ref} from "vue";
+
+const numbers = ref([]);
+const count = ref(6);
+const totalNumbers = ref([])
+const result = ref(null)
+const inputValue = ref(null)
+const resultDisplay = ref(false)
+
+const generateRandomNumbers = () => {
+  const generatedNumbers = [];
+  for (let i = 0; i < count.value; i++) {
+    setTimeout(() => {
+      generatedNumbers.pop(); // Remove the last number
+      const newNumber = Math.floor(Math.random() * 10) + 1;
+      generatedNumbers.push(newNumber); // Add a new random number
+      numbers.value = [...generatedNumbers]; // Update numbers array
+      totalNumbers.value.push(newNumber); // Push the new number to totalNumbers array
+    }, i * 1000);
+  }
+  numbers.value = generatedNumbers;
+};
+
+const checkAnswer = () => {
+  result.value = totalNumbers.value.reduce((acc, curr) => acc + curr, 0).toString();
+  console.log(result.value)
+  console.log(inputValue.value)
+  if (inputValue.value === result.value) {
+    resultDisplay.value = true;
+  } else {
+
+  }
+}
+
+onMounted(() => {
+  generateRandomNumbers()
+})
 </script>
 
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <ul>
+      <li v-for="(number, index) in numbers" :key="index">{{ number }}</li>
+    </ul>
+    <input type="text" placeholder="Enter your result" v-model="inputValue">
+    <p v-if="resultDisplay">Javob tog'ri {{result}}</p>
+    <button @click="checkAnswer()">click on me</button>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+li {
+  list-style: none;
+  font-size: 50px;
+
 }
 </style>
